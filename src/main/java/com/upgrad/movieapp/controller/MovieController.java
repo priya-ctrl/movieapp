@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +51,23 @@ public ResponseEntity getAllMovies(){
     return new ResponseEntity(movieDTOList, HttpStatus.OK);
 }
 
-@GetMapping(value)
-public ResponseEntity getMovieBasedonId(int id){}
+@GetMapping(value ="/movie/{id}")
+public ResponseEntity getMovieBasedonId(@PathVariable(name ="id") int id){
+Movie responseMovie = movieService.getMovieDetails(id);
+
+MovieDTO responseMovieDTO = modelMapper.map(responseMovie, MovieDTO.class);
+return  new ResponseEntity(responseMovieDTO,HttpStatus.OK);
 }
+@PutMapping(value ="movies/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
+public ResponseEntity updateMovieDetails(@PathVariable (name ="id" )int id,
+       @RequestBody MovieDTO movieDTO) {
+
+        Movie newMovie= modelMapper.map(movieDTO, Movie.class);
+        Movie updateMovie = movieService.updateMovieDetails(id,newMovie);
+
+        MovieDTO updatedMovieDTO = modelMapper.map(updateMovie, MovieDTO.class);
+        return new ResponseEntity(updatedMovieDTO, HttpStatus.OK);
+    }
+}
+
 
